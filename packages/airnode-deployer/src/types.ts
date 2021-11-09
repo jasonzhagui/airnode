@@ -11,7 +11,7 @@ export interface AirnodeWallet {
 export interface Deployment {
   nodeVersion: string;
   airnodeAddressShort: string;
-  cloudProvider: 'aws' | 'local';
+  cloudProvider: 'aws' | 'local' | 'gcp';
   region: string;
   stage: string;
 }

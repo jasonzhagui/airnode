@@ -40,6 +40,7 @@ async function coordinator(config: Config): Promise<CoordinatorState> {
     airnodeAddressShort: state1.settings.airnodeAddressShort,
     stage: config.nodeSettings.stage,
     region: config.nodeSettings.region,
+    projectId: config.nodeSettings.projectId
   };
 
   // =================================================================

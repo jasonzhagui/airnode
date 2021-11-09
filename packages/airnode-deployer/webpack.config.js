@@ -5,6 +5,7 @@ module.exports = {
   devtool: 'source-map',
   entry: {
     'handlers/aws/index': './dist/src/handlers/aws/index.js',
+    'handlers/gcp/index': './dist/src/handlers/gcp/index.js',
   },
   externals: '../../config-data/config.json',
   mode: 'production',

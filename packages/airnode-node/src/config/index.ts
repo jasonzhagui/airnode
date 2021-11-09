@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { OIS } from '@api3/airnode-ois';
-import { validateJsonWithTemplate, Result } from '@api3/airnode-validator';
+// import { validateJsonWithTemplate, Result } from '@api3/airnode-validator';
 import template from 'lodash/template';
 import { Config } from '../types';
 import { randomString } from '../utils/string-utils';
@@ -32,10 +32,10 @@ export function parseConfig(configPath: string, secrets: Record<string, string |
 
   const parsedConfig = JSON.parse(interpolatedConfig);
 
-  const validationResult = validateConfig(parsedConfig);
-  if (!validationResult.valid) {
-    throw new Error(`Invalid Airnode configuration file: ${JSON.stringify(validationResult.messages)}`);
-  }
+  // const validationResult = validateConfig(parsedConfig);
+  // if (!validationResult.valid) {
+  //   throw new Error(`Invalid Airnode configuration file: ${JSON.stringify(validationResult.messages)}`);
+  // }
 
   const ois = parseOises(parsedConfig.ois);
 
@@ -55,7 +55,7 @@ export function getEnvValue(envName: string) {
   return process.env[envName];
 }
 
-function validateConfig(supposedConfig: any): Result {
-  // TODO: config version
-  return validateJsonWithTemplate(supposedConfig, 'config');
-}
+// function validateConfig(supposedConfig: any): Result {
+//   // TODO: config version
+//   return validateJsonWithTemplate(supposedConfig, 'config');
+// }

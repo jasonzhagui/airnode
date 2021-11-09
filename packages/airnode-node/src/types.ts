@@ -210,6 +210,7 @@ export interface WorkerOptions {
   readonly airnodeAddressShort: string;
   readonly region: string;
   readonly stage: string;
+  readonly projectId?: string;
 }
 
 export type WorkerFunctionName = 'initializeProvider' | 'callApi' | 'processProviderRequests';
@@ -357,7 +358,7 @@ export interface ChainConfig {
   readonly providers: Record<string, Provider>;
 }
 
-export type NodeCloudProvider = 'local' | 'aws';
+export type NodeCloudProvider = 'local' | 'aws' | 'gcp';
 
 export interface HttpGateway {
   readonly enabled: boolean;
@@ -382,6 +383,7 @@ export interface NodeSettings {
   readonly nodeVersion: string;
   readonly region: string;
   readonly stage: string;
+  readonly projectId?: string;
 }
 
 export interface ApiCredentials extends AdapterApiCredentials {
