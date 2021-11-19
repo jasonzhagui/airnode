@@ -7,6 +7,7 @@ import { buildEVMState } from '../providers/state';
 import { spawnNewProvider, spawnProviderRequestProcessor } from '../providers/worker';
 import { Config, EVMProviderState, LogsData, ProviderState, ProviderStates, WorkerOptions } from '../types';
 import { WORKER_PROVIDER_INITIALIZATION_TIMEOUT, WORKER_PROVIDER_PROCESS_REQUESTS_TIMEOUT } from '../constants';
+import * as grouping from '../requests/grouping';
 
 async function initializeEVMProvider(
   state: ProviderState<EVMProviderState>,
@@ -59,9 +60,10 @@ export async function initialize(
 
 async function processEvmProviderRequests(
   state: ProviderState<EVMProviderState>,
+  sponsorAddress: string,
   workerOpts: WorkerOptions
 ): Promise<LogsData<ProviderState<EVMProviderState> | null>> {
-  const initialization = () => spawnProviderRequestProcessor(state, workerOpts);
+  const initialization = () => spawnProviderRequestProcessor(state, sponsorAddress, workerOpts);
   const [err, logsWithRes] = await go(initialization, { timeoutMs: WORKER_PROVIDER_PROCESS_REQUESTS_TIMEOUT });
   if (err || !logsWithRes) {
     const log = logger.pend('ERROR', `Unable to process provider:${state.settings.name} requests`, err);
@@ -75,7 +77,13 @@ export async function processRequests(
   workerOpts: WorkerOptions
 ): Promise<LogsData<ProviderStates>> {
   const processEvmProviders = flatMap(
-    providerStates.evm.map((providerState) => processEvmProviderRequests(providerState, workerOpts))
+    providerStates.evm.map((providerState) => {
+      const requestsBySponsorAddress = grouping.groupRequestsBySponsorAddress(providerState.requests);
+      const sponsorAddresses = Object.keys(requestsBySponsorAddress);
+      return sponsorAddresses.map(sponsorAddress => processEvmProviderRequests(providerState, sponsorAddress, workerOpts));
+      }
+
+    )
   );
   const evmProviderStates = await Promise.all(processEvmProviders);
 

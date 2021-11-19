@@ -7,7 +7,8 @@ import * as utils from '../utils';
 import { EVMProviderState, GroupedRequests, ProviderState } from '../../types';
 
 export async function processTransactions(
-  initialState: ProviderState<EVMProviderState>
+  initialState: ProviderState<EVMProviderState>,
+  sponsorAddress: string
 ): Promise<ProviderState<EVMProviderState>> {
   const { chainId, chainType, name: providerName } = initialState.settings;
   const { coordinatorId } = initialState;
@@ -48,7 +49,7 @@ export async function processTransactions(
   // =================================================================
   // STEP 4: Submit transactions for each wallet
   // =================================================================
-  const receipts = await fulfillments.submit(state3);
+  const receipts = await fulfillments.submit(state3, sponsorAddress);
   const successfulReceipts = receipts.filter((receipt) => !!receipt.data);
   successfulReceipts.forEach((receipt) => {
     logger.info(`Transaction:${receipt.data!.hash} submitted for Request:${receipt.id}`, baseLogOptions);

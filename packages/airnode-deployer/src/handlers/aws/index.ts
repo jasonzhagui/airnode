@@ -38,9 +38,11 @@ export async function callApi(event: any) {
 }
 
 export async function processProviderRequests(event: any) {
+  // TODO check
   const stateWithConfig = { ...event.state, config: parsedConfig };
 
-  const [err, updatedState] = await promiseUtils.go(() => handlers.processTransactions(stateWithConfig));
+  const [err, updatedState] = await promiseUtils.go(() =>
+    handlers.processTransactions(stateWithConfig, event.sponsorAddress));
   if (err || !updatedState) {
     const msg = `Failed to process provider requests: ${stateWithConfig.settings.name}`;
     const errorLog = logger.pend('ERROR', msg, err);

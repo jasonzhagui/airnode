@@ -11,7 +11,7 @@
   "scripts": {
     "build": "yarn run clean && yarn run compile",
     "clean": "rimraf -rf ./dist *.tgz",
-    "compile": "hardhat compile && tsc -p tsconfig.build.json",
+    "compile": "hardhat compile --show-stack-traces && tsc -p tsconfig.build.json",
     "pack": "yarn pack",
     "test": "yarn test:ts && yarn test:hardhat",
     "test:ts": "SILENCE_LOGGER=true jest --coverage",

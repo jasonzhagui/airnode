@@ -117,13 +117,14 @@ const submitSponsorRequestsSequentially = async (state: ProviderState<EVMProvide
   return receipts;
 };
 
-export async function submit(state: ProviderState<EVMProviderState>) {
-  const requestsBySponsorAddress = grouping.groupRequestsBySponsorAddress(state.requests);
-  const sponsorAddresses = Object.keys(requestsBySponsorAddress);
+export async function submit(state: ProviderState<EVMProviderState>, sponsorAddress: string) {
+  // const requestsBySponsorAddress = grouping.groupRequestsBySponsorAddress(state.requests);
 
-  const promises = sponsorAddresses.map((address) => submitSponsorRequestsSequentially(state, address));
-  const nestedReceipts = await Promise.all(promises);
-  return flatten(nestedReceipts);
+  // const sponsorAddresses = Object.keys(requestsBySponsorAddress);
+
+  // const promises = sponsorAddresses.map((address) => submitSponsorRequestsSequentially(state, address));
+  // const nestedReceipts = await Promise.all(promises);
+  return flatten([await submitSponsorRequestsSequentially(state, sponsorAddress)]);
 }
 
 export function applyFulfillments<T>(requests: Request<T>[], receipts: TransactionReceipt[]) {

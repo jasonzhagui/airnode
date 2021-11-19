@@ -9,6 +9,7 @@ import { go } from '../utils/promise-utils';
 
 export interface ProviderArgs {
   readonly state: ProviderState<EVMProviderState>;
+  readonly sponsorAddress: string;
 }
 
 export interface CallApiArgs {
@@ -49,11 +50,11 @@ export async function callApi({ aggregatedApiCall, logOptions, apiCallOptions }:
   return { ok: true, data: response };
 }
 
-export async function processProviderRequests({ state: providerState }: ProviderArgs): Promise<WorkerResponse> {
+export async function processProviderRequests({ state: providerState, sponsorAddress }: ProviderArgs): Promise<WorkerResponse> {
   const config = loadConfig();
   const stateWithConfig = state.update(providerState, { config });
 
-  const [err, updatedState] = await go(() => handlers.processTransactions(stateWithConfig));
+  const [err, updatedState] = await go(() => handlers.processTransactions(stateWithConfig, sponsorAddress));
   if (err || !updatedState) {
     const msg = `Failed to process provider requests:${stateWithConfig.settings.name}`;
     const errorLog = logger.pend('ERROR', msg, err);

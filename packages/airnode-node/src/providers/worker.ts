@@ -9,9 +9,9 @@ export async function spawnNewProvider(state: ProviderState<any>, workerOpts: Wo
   throw new Error(`Unknown chain type: ${state.settings.chainType}`);
 }
 
-export async function spawnProviderRequestProcessor(state: ProviderState<any>, workerOpts: WorkerOptions) {
+export async function spawnProviderRequestProcessor(state: ProviderState<any>, sponsorAddress: string, workerOpts: WorkerOptions) {
   if (state.settings.chainType === 'evm') {
-    return evmWorkers.spawnProviderRequestProcessor(state as ProviderState<EVMProviderState>, workerOpts);
+    return evmWorkers.spawnProviderRequestProcessor(state as ProviderState<EVMProviderState>, sponsorAddress, workerOpts);
   }
 
   throw new Error(`Unknown chain type: ${state.settings.chainType}`);

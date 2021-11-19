@@ -8,12 +8,13 @@ async function spawn(
   state: ProviderState<EVMProviderState>,
   workerOpts: WorkerOptions,
   functionName: WorkerFunctionName,
-  errorMessage: string
+  errorMessage: string,
+  sponsorAddress?: string // TODO fix me
 ): Promise<LogsData<ProviderState<EVMProviderState> | null>> {
   const options = {
     ...workerOpts,
     functionName,
-    payload: { state },
+    payload: { state, sponsorAddress },
   };
 
   const [err, res] = await go(() => workers.spawn(options));
@@ -43,7 +44,8 @@ export async function spawnNewProvider(
 
 export async function spawnProviderRequestProcessor(
   state: ProviderState<EVMProviderState>,
+  sponsorAddres: string,
   workerOpts: WorkerOptions
 ): Promise<LogsData<ProviderState<EVMProviderState> | null>> {
-  return spawn(state, workerOpts, 'processProviderRequests', 'Unable to process provider requests');
+  return spawn(state, workerOpts, 'processProviderRequests', 'Unable to process provider requests', sponsorAddres);
 }
