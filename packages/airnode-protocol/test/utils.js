@@ -59,4 +59,24 @@ module.exports = {
       return 'No revert string';
     }
   },
+
+  makeMulticallData: (calls) => {
+    return calls.map(({ target, method, args }) => {
+      return {
+        target: target,
+        callData:
+          new ethers.utils.Interface([method[0]]).getSighash(method[1]) +
+          (args && args.length > 0 ? args.join('') : ''),
+      };
+    });
+  },
+
+  decodeMulticallResult: (calls, result) => {
+    return result.returnData.map((r, i) =>
+      ethers.utils.defaultAbiCoder.decode(calls[i].returnTypes, r).reduce((acc, curr, j) => {
+        acc[calls[i].returnNames[j]] = curr;
+        return acc;
+      }, {})
+    );
+  },
 };

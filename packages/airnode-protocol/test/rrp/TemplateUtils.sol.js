@@ -58,6 +58,49 @@ describe('createTemplate', function () {
   });
 });
 
+describe('multicall', function () {
+  it('gets templates', async function () {
+    // Create the templates
+    const noTemplates = 10;
+    const airnodes = Array.from({ length: noTemplates }, () => utils.generateRandomAddress());
+    const endpointIds = Array.from({ length: noTemplates }, () => utils.generateRandomBytes32());
+    const parameters = Array.from({ length: noTemplates }, () => utils.generateRandomBytes32());
+    const templateIds = [];
+    for (let i = 0; i < noTemplates; i++) {
+      await airnodeRrp.createTemplate(airnodes[i], endpointIds[i], parameters[i]);
+      templateIds.push(
+        hre.ethers.utils.keccak256(
+          hre.ethers.utils.solidityPack(['address', 'bytes32', 'bytes'], [airnodes[i], endpointIds[i], parameters[i]])
+        )
+      );
+    }
+
+    const calls = [];
+
+    for (let i = 0; i < noTemplates; i++) {
+      calls.push({
+        target: airnodeRrp.address,
+        method: ['function templates(bytes32) returns (address,bytes32,bytes)', 'templates'],
+        args: [templateIds[i].replace('0x', '')],
+        returnTypes: ['address', 'bytes32', 'bytes'],
+        returnNames: ['airnode', 'endpointId', 'parameters'],
+      });
+    }
+
+    const result = await airnodeRrp.callStatic.aggregate(utils.makeMulticallData(calls));
+
+    const decodedResults = utils.decodeMulticallResult(calls, result);
+
+    // Get the templates and verify them
+    expect(decodedResults.length).to.equal(noTemplates);
+    for (let i = 0; i < noTemplates; i++) {
+      expect(decodedResults[i]['airnode']).to.equal(airnodes[i]);
+      expect(decodedResults[i]['endpointId']).to.equal(endpointIds[i]);
+      expect(decodedResults[i]['parameters']).to.equal(parameters[i]);
+    }
+  });
+});
+
 describe('getTemplates', function () {
   it('gets templates', async function () {
     // Create the templates

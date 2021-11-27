@@ -2,9 +2,10 @@
 pragma solidity 0.8.9;
 
 import "./interfaces/ITemplateUtils.sol";
+import "./Multicall.sol";
 
 /// @title Contract that implements request templates
-contract TemplateUtils is ITemplateUtils {
+contract TemplateUtils is ITemplateUtils, Multicall {
     struct Template {
         address airnode;
         bytes32 endpointId;
