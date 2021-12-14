@@ -45,7 +45,7 @@ describe('startCoordinator', () => {
     jest.setTimeout(30000);
     const config = fixtures.buildConfig();
     jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(config));
-    jest.spyOn(validator, 'validateJsonWithTemplate').mockReturnValue({ valid: true, messages: [] });
+    jest.spyOn(validator, 'validateJsonWithTemplate').mockReturnValue({ valid: true, messages: [], specs: config });
 
     const getBlockNumberSpy = jest.spyOn(ethers.providers.JsonRpcProvider.prototype, 'getBlockNumber');
     getBlockNumberSpy.mockResolvedValueOnce(12);
